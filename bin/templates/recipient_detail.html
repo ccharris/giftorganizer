@@ -44,7 +44,7 @@
 						th:text="${g.name}"></p>
 				</div>
 				<p class="list-group-item">
-					<a href="/" th:href="@{|/recipient/${recipient.id}/edit|}">Edit Recipient</a>
+					<a href="/" th:href="@{|/recipient/${recipient.id}/edit|}"><button  class="btn btn-success">Edit Recipient</button></a>
 				</p>
 			</div>
 		</div>
@@ -52,8 +52,8 @@
 	<div th:unless="${recipient}">
 		<h3>No contact found.</h3>
 	</div>
-	<div>
-		<a class="col-md-4" href="/">Back</a>
-	</div>
+	<div class="row" style="padding: 50px 0px 0px 0px">
+			<a class="col-md-4" href="/recipients"><button class="btn btn-primary">Back</button></a>
+		</div>
 </body>
 </html>

@@ -225,6 +225,7 @@ public class MainController {
 	@GetMapping("/recipient/{id}/delete")
 	public String recipientDelete(Model model, @PathVariable(name = "id") long id) {
 		model.addAttribute("recipient", recipientRepo.findOne(id));
+		model.addAttribute("gifts", giftRepo.findByRecipientId(id));
 		return "recipient_delete";
 	}
 

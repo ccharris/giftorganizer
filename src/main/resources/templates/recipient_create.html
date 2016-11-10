@@ -46,10 +46,11 @@
 					th:field="*{anniversary}" /> <span
 					th:if="${#fields.hasErrors('anniversary')}" th:errors="*{anniversary}">Anniversary Error</span>
 			</div>
-			<button type="submit" class="btn btn-default">Submit</button>
+			<button type="submit" class="btn btn-success">Submit</button>
+			
 		</form>
-			<div class="row">
-			<a class="col-md-4" href="/recipients">Back</a>
+		<div class="row" style="padding: 50px 0px 0px 0px">
+			<a class="col-md-4" href="/recipients"><button class="btn btn-primary">Back</button></a>
 		</div>
 	</div>
 </body>
