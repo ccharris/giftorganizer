@@ -1,0 +1,56 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layouts/basic">
+<head>
+<title>Gift Organizer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body layout:fragment="content">
+	<h1 th:text="'Create New Gift for ' + ${recipient.firstName}"></h1>
+	<div class="row col-md-6">
+		<form method="POST" th:object="${gift}">
+			<input type="hidden" name="id" th:value="*{id}" />
+			<input type="hidden" name="recipientId" th:value="${recipientId}"/>
+			<div class="form-group">
+				<label for="name">Name</label> <input type="text"
+					name="name" class="form-control" placeholder="Name"
+					th:field="*{name}" /> <span
+					th:if="${#fields.hasErrors('name')}"
+					th:errors="*{name}">Name Error</span>
+			</div>
+			<div class="form-group">
+				<label for="price">Price (Optional)</label> <input type="text"
+					name="note" class="form-control" placeholder="Price"
+					th:field="*{price}" /> <span
+					th:if="${#fields.hasErrors('price')}"
+					th:errors="*{price}">Price Error</span>
+			</div>
+			
+			<div class="form-group">
+				<label for="linkOne">Link One (Optional)</label> <input type="text" name="linkOne"
+					class="form-control" placeholder="link.com" th:field="*{linkOne}" /> <span
+					th:if="${#fields.hasErrors('linkOne')}" th:errors="*{linkOne}">Link One
+					Error</span>
+			</div>
+			<div class="form-group">
+				<label for="linkTwo">Link Two (Optional)</label> <input type="text"
+					name="linkTwo" class="form-control" placeholder="link.com"
+					th:field="*{linkTwo}" /> <span
+					th:if="${#fields.hasErrors('linkTwo')}" th:errors="*{linkTwo}">Link Two Error</span>
+			</div>
+			 <div class="form-group">
+		    	<label for="bought">Purchased:  </label>
+		    	<select class="form-control" name="bought">
+		    		<option th:selected="*{bought} == true" value="true">Purchased</option>
+		    		<option th:selected="*{bought} == false" value="false">Not Yet</option>
+		    		</select>
+		    </div>
+			<button type="submit" class="btn btn-default">Submit</button>
+		</form>
+			<div class="row">
+			<a class="col-md-4" href="/recipient/${recipient.id}">Back</a>
+		</div>
+	</div>
+</body>
+</html>

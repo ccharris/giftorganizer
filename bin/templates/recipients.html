@@ -46,17 +46,17 @@
 				<td th:text="${r.firstName}"></td>
 				<td th:if="*{! #strings.isEmpty(r.lastName)}"
 					th:text="${r.lastName}"></td>
-				<td th:unless="*{! #strings.isEmpty(r.lastName)}"></td>
+				<td th:unless="*{! #strings.isEmpty(r.lastName)}"> </td>
 				<td th:if="*{! #strings.isEmpty(r.email)}"
 					th:text="${r.email}"></td>
-				<td th:unless="*{! #strings.isEmpty(r.email)}"></td>
+				<td th:unless="*{! #strings.isEmpty(r.email)}"> </td>
 				<td th:if="*{! #strings.isEmpty(r.birthday)}"
 					th:text="${r.birthday}"></td>
-				<td th:unless="*{! #strings.isEmpty(r.anniversary)}"></td>
+					<td th:unless="*{! #strings.isEmpty(r.birthday)}"> </td>
+				<td th:unless="*{! #strings.isEmpty(r.anniversary)}"> </td>
 				<td th:if="*{! #strings.isEmpty(r.anniversary)}"
 					th:text="${r.anniversary}"></td>
-				<td th:unless="*{! #strings.isEmpty(r.anniversary)}"></td>
-				<td><div th:each="g : ${r.gifts}"><p th:text="${g.name}"></p></div></td>
+				<td><div th:each="g : ${r.gifts}"><div th:if="${g.bought} == true"> <p style="text-decoration: line-through" th:utext="${g.name}"></p></div> <p th:if="${g.bought} == false" th:utext="${g.name}"></p></div></td>
 				<td><a class="btn btn-default" href="/"
 					th:href="@{|/recipient/${r.id}}" role="button"><i
 						class="fa fa-user" aria-hidden="true"></i></a></td>
