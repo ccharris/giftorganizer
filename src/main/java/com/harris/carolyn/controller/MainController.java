@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.harris.carolyn.beans.Event;
 import com.harris.carolyn.beans.Gift;
-import com.harris.carolyn.beans.Recipient;
 import com.harris.carolyn.beans.User;
+import com.harris.carolyn.beans.Recipient;
 import com.harris.carolyn.repository.EventRecipientRepository;
 import com.harris.carolyn.repository.EventRepository;
 import com.harris.carolyn.repository.GiftRepository;
-import com.harris.carolyn.repository.RecipientRepository;
 import com.harris.carolyn.repository.UserRepository;
+import com.harris.carolyn.repository.RecipientRepository;
 
 @Controller
 public class MainController {
@@ -70,7 +70,13 @@ public class MainController {
 	public String users(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		if (searchTerm == null || "".equals(searchTerm)) {
 			model.addAttribute("recipients", recipientRepo.findByUserId(v.getId()));
 		} else {
@@ -113,7 +119,13 @@ public class MainController {
 	public String events(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		if (searchTerm == null || "".equals(searchTerm)) {
 			model.addAttribute("events", eventRepo.findByUserId(v.getId()));
 		} else {
@@ -217,7 +229,13 @@ public class MainController {
 	public String recipientCreate(Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		boolean isUser = false;
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
@@ -230,7 +248,13 @@ public class MainController {
 	public String recipientCreateSave(@ModelAttribute @Valid Recipient recipient, BindingResult result, Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
 
@@ -249,7 +273,13 @@ public class MainController {
 	public String eventCreate(Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
 		model.addAttribute("recipients", recipientRepo.findAll());
@@ -293,7 +323,13 @@ public class MainController {
 	public String recipientEdit(Model model, @PathVariable(name = "id") long id) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
 		model.addAttribute("id", id);
@@ -308,7 +344,13 @@ public class MainController {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
 
@@ -328,7 +370,13 @@ public class MainController {
 	public String eventEdit(Model model, @PathVariable(name = "id") long id) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String name = auth.getName();
-		User v = userRepo.findOneByEmail(name);
+		List<User> logins = userRepo.findOneByEmail(name);
+		User v = new User();
+		for (User login : logins) {
+			if (login.getEmail().equals(name)){
+				v = login;
+			}
+		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
 		model.addAttribute("id", id);
