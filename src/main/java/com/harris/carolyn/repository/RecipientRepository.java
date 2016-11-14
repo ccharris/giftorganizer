@@ -12,5 +12,5 @@ import com.harris.carolyn.beans.Recipient;
 public interface RecipientRepository extends CrudRepository<Recipient, Long> {
 
 	public List<Recipient> findByUserId(long userId);
-	public List<Recipient> findByLastNameContainsOrFirstNameContainsOrEmailContainsOrBirthdayContainsOrAnniversaryContainsAllIgnoreCase(String firstNamePart, String lastNamePart, String emailPart, String birthdayPart, String anniversaryPart);
+	public List<Recipient> findByLastNameContainsOrFirstNameContainsOrEmailContainsOrBirthdayContainsOrNotesContainsOrGroupTagContainsAllIgnoreCase(String firstNamePart, String lastNamePart, String emailPart, String birthdayPart, String notesPart, String groupTagPart);
 }

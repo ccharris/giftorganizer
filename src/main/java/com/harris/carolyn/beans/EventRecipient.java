@@ -19,23 +19,11 @@ public class EventRecipient {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
 	
+	private long recipientId;
 	
-	@OneToOne(optional=false)
-	@JoinColumn(name="recipient_id")
-	private Recipient recipient;
-	
-	@ManyToOne
-    @JoinColumn(name = "event_id")
-    private Event event;
-	
+	private long eventId;
 
-	public Recipient getRecipient() {
-		return recipient;
-	}
-
-	public void setRecipient(Recipient recipient) {
-		this.recipient = recipient;
-	}
+	
 
 	public long getId() {
 		return id;
@@ -48,12 +36,22 @@ public class EventRecipient {
 
 
 
-	public Event getEvent() {
-		return event;
+	
+
+	public long getRecipientId() {
+		return recipientId;
 	}
 
-	public void setEvent(Event event) {
-		this.event = event;
+	public void setRecipientId(long recipientId) {
+		this.recipientId = recipientId;
+	}
+
+	public long getEventId() {
+		return eventId;
+	}
+
+	public void setEventId(long eventId) {
+		this.eventId = eventId;
 	}
 
 	@Override

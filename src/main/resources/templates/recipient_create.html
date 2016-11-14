@@ -41,10 +41,16 @@
 					th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}">Birthday Error</span>
 			</div>
 			<div class="form-group">
-				<label for="anniversary">Anniversary</label> <input type="text"
-					name="anniversary" class="form-control" placeholder=""
-					th:field="*{anniversary}" /> <span
-					th:if="${#fields.hasErrors('anniversary')}" th:errors="*{anniversary}">Anniversary Error</span>
+				<label for="notes">Notes</label> <input type="text"
+					name="notes" class="form-control" placeholder=""
+					th:field="*{notes}" /> <span
+					th:if="${#fields.hasErrors('notes')}" th:errors="*{notes}">Notes Error</span>
+			</div>
+			<div class="form-group">
+				<label for="groupTag">Group</label> <input type="text"
+					name="groupTag" class="form-control" placeholder=""
+					th:field="*{groupTag}" /> <span
+					th:if="${#fields.hasErrors('groupTag')}" th:errors="*{groupTag}">Group Error</span>
 			</div>
 			<button type="submit" class="btn btn-success">Submit</button>
 			

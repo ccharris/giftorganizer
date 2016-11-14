@@ -1,5 +1,6 @@
 package com.harris.carolyn.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,11 @@ public class MainController {
 	public String index(Model model) {
 		return "index";
 	}
+	
+	@GetMapping("/home")
+	public String home(Model model) {
+		return "home";
+	}
 
 	@GetMapping("/login")
 	public String login(Model model) {
@@ -57,7 +63,7 @@ public class MainController {
 
 	@PostMapping("/login")
 	public String loginSubmit() {
-		return "index";
+		return "home";
 	}
 
 	@GetMapping("/recipients")
@@ -70,8 +76,8 @@ public class MainController {
 		} else {
 			List<Recipient> userRecipients = recipientRepo.findByUserId(v.getId());
 			List<Recipient> searchRecipients = recipientRepo
-					.findByLastNameContainsOrFirstNameContainsOrEmailContainsOrBirthdayContainsOrAnniversaryContainsAllIgnoreCase(
-							searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
+					.findByLastNameContainsOrFirstNameContainsOrEmailContainsOrBirthdayContainsOrNotesContainsOrGroupTagContainsAllIgnoreCase(
+							searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
 			List<Recipient> recipients = new ArrayList<Recipient>();
 			for (Recipient recipient : searchRecipients) {
 				if (userRecipients.contains(recipient)) {
@@ -92,6 +98,15 @@ public class MainController {
 		model.addAttribute("gifts", giftRepo.findByRecipientId(id));
 
 		return "gifts";
+	}
+	
+	@GetMapping("/event/{id}/recipients")
+	public String eventRecipients(Model model, @PathVariable(name = "id") long id) {
+		model.addAttribute("id", id);
+		Event e = eventRepo.findOne(id);
+		model.addAttribute("event", e);
+
+		return "event_recipients";
 	}
 
 	@GetMapping("/events")
@@ -142,6 +157,14 @@ public class MainController {
 		Recipient u = recipientRepo.findOne(id);
 		model.addAttribute("recipient", u);
 		return "recipient_detail";
+	}
+	
+	@GetMapping("/event/{id}")
+	public String event(Model model, @PathVariable(name = "id") long id) {
+		model.addAttribute("id", id);
+		Event e = eventRepo.findOne(id);
+		model.addAttribute("event", e);
+		return "event_detail";
 	}
 
 	@GetMapping("/recipient/{id}/gift/create")
@@ -221,6 +244,35 @@ public class MainController {
 		}
 
 	}
+	
+	@GetMapping("/event/create")
+	public String eventCreate(Model model) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String name = auth.getName();
+		User v = userRepo.findOneByEmail(name);
+		long userId = v.getId();
+		model.addAttribute("userId", userId);
+		model.addAttribute("recipients", recipientRepo.findAll());
+		Event e = new Event();
+		e.setUser(v);
+		model.addAttribute("event", e);
+
+		return "event_create";
+	}
+
+	@PostMapping("/event/create")
+	public String eventCreateSave(@ModelAttribute @Valid Event event, BindingResult result, Model model) {
+		
+
+		if (result.hasErrors()) {
+			model.addAttribute("event", event);
+			return "event_create";
+		} else {
+			eventRepo.save(event);
+			return "redirect:/events";
+		}
+
+	}
 
 	@GetMapping("/recipient/{id}/delete")
 	public String recipientDelete(Model model, @PathVariable(name = "id") long id) {
@@ -271,6 +323,36 @@ public class MainController {
 		}
 
 	}
+	
+	@GetMapping("/event/{id}/edit")
+	public String eventEdit(Model model, @PathVariable(name = "id") long id) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String name = auth.getName();
+		User v = userRepo.findOneByEmail(name);
+		long userId = v.getId();
+		model.addAttribute("userId", userId);
+		model.addAttribute("id", id);
+		Event e = eventRepo.findOne(id);
+		model.addAttribute("event", e);
+		model.addAttribute("recipients", recipientRepo.findAll());
+		return "event_edit";
+	}
+
+	@PostMapping("/event/{id}/edit")
+	public String eveentEditSave(@PathVariable(name = "id") long id, @ModelAttribute @Valid Event event,
+			BindingResult result, Model model) {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+		if (result.hasErrors()) {
+			model.addAttribute("event", event);
+			return "event_edit";
+		} else {
+			eventRepo.save(event);
+			return "redirect:/event/" + event.getId();
+		}
+
+	}
 
 	@GetMapping("/recipient/{id}/gift/{giftid}/delete")
 	public String giftDelete(Model model, @PathVariable(name = "id") long id,
@@ -287,6 +369,21 @@ public class MainController {
 		Recipient r = recipientRepo.findOne(id);
 
 		return "redirect:/recipient/" + r.getId() + "/gifts";
+
+	}
+	
+	@GetMapping("/event/{id}/delete")
+	public String eventDelete(Model model, @PathVariable(name = "id") long id) {
+		model.addAttribute("event", eventRepo.findOne(id));
+		return "event_delete";
+	}
+
+	@PostMapping("/event/{id}/delete")
+	public String eventDeleteSave(@ModelAttribute @Valid Event event, BindingResult result, Model model,
+			@PathVariable(name = "id") long id) {
+		eventRepo.delete(eventRepo.findOne(id));
+
+		return "redirect:/events";
 
 	}
 
@@ -338,7 +435,7 @@ public class MainController {
 	}
 
 	@GetMapping("/recipient/{id}/gift/{giftid}/bought")
-	public String giftBough(Model model, @PathVariable(name = "id") long id,
+	public String giftBought(Model model, @PathVariable(name = "id") long id,
 			@PathVariable(name = "giftid") long giftId) {
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		model.addAttribute("recipientId", id);
@@ -347,6 +444,11 @@ public class MainController {
 		model.addAttribute("gifts", giftRepo.findByRecipientId(id));
 		g.setBought(true);
 		giftRepo.save(g);
+		Event e = eventRepo.findByRecipients(recipientRepo.findOne(id));
+		BigDecimal budget = e.getBudget();
+		BigDecimal newBudget = budget.subtract(g.getPrice());
+		e.setBudget(newBudget);
+		eventRepo.save(e);
 		return "gifts";
 	}
 

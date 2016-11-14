@@ -17,8 +17,9 @@ CREATE TABLE IF NOT EXISTS giftOrganizer.users (
   last_name VARCHAR(45) NULL,
   email VARCHAR(128) NULL,
   birthday VARCHAR(100) NULL,
-  anniversary VARCHAR(100) NULL,
+  notes VARCHAR(100) NULL,
   user_id INT NOT NULL,
+  group_tag VARCHAR(100) NULL,
   PRIMARY KEY (id));
   
   CREATE TABLE IF NOT EXISTS giftOrganizer.events (

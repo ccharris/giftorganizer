@@ -9,8 +9,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
@@ -28,12 +29,26 @@ public class Event {
 	
 	private BigDecimal budget;
 	
-	@OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    private Set<EventRecipient> eventRecipients;
+	@ManyToMany(cascade = {
+			CascadeType.DETACH,
+			CascadeType.MERGE,
+			CascadeType.REFRESH,
+			CascadeType.PERSIST
+	})
+	@JoinTable(name = "event_recipients", joinColumns = @JoinColumn(name = "eventId", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "recipientId", referencedColumnName = "id"))
+    private Set<Recipient> recipients;
 	
 	@ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 
 	public long getId() {
 		return id;
@@ -59,35 +74,17 @@ public class Event {
 		this.budget = budget;
 	}
 
-	public Set<EventRecipient> getEventRecipients() {
-		return eventRecipients;
+	public Set<Recipient> getRecipients() {
+		return recipients;
 	}
 
-	public void setEventRecipients(Set<EventRecipient> eventRecipients) {
-		this.eventRecipients = eventRecipients;
+	public void setRecipients(Set<Recipient> recipients) {
+		this.recipients = recipients;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
-		return result;
-	}
+	
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Event other = (Event) obj;
-		if (id != other.id)
-			return false;
-		return true;
-	}
+	
 	
 	
 
