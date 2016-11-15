@@ -10,6 +10,7 @@
 		<form th:action="@{|/recipient/${recipient.id}/edit|}"  method="POST">
 		<input name="id" type="hidden" th:value="${recipient.id}"/>
 		<input name="userId" type="hidden" th:value="${userId}"/>
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 		<div class="form-group">
 			<label for="firstName">First Name</label>
 			<input name="firstName" class="form-control" type="text" th:value="${recipient.firstName}"/>

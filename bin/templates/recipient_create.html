@@ -10,6 +10,7 @@
 	<h1>Create New Recipient</h1>
 	<div class="row col-md-6">
 		<form method="POST" th:object="${recipient}">
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 			<input type="hidden" name="id" th:value="*{id}" />
 			<input name="userId" type="hidden" th:value="${userId}"/>
 			<input name="active" type="hidden" th:value="true"/>

@@ -9,11 +9,18 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Size;
 
+import com.harris.carolyn.repository.AccountRepository;
+import com.stormpath.sdk.servlet.account.AccountResolver;
+
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "accounts")
+public class Account {
+
+	
+	
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,8 +30,6 @@ public class User {
 	private String firstName;
 
 	private String lastName;
-	
-	private String password;
 	
 	private String email;
 	
@@ -37,6 +42,17 @@ public class User {
 	
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Event> events;
+	
+	public Account setAccount(HttpServletRequest req, Account account){
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			account.setFirstName(AccountResolver.INSTANCE.getAccount(req).getGivenName());
+			account.setLastName(AccountResolver.INSTANCE.getAccount(req).getSurname());
+			account.setEmail(AccountResolver.INSTANCE.getAccount(req).getEmail());
+			account.setRole("USER");
+			account.setActive(true);
+		}
+		return account;
+	}
 
 	public long getId() {
 		return id;
@@ -62,13 +78,6 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	public String getEmail() {
 		return email;
@@ -118,7 +127,7 @@ public class User {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		User other = (User) obj;
+		Account other = (Account) obj;
 		if (id != other.id)
 			return false;
 		return true;

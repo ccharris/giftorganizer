@@ -12,6 +12,7 @@
 		<form th:action="@{|/event/${event.id}/edit|}" method="POST" th:object="${event}">
 			<input name="id" type="hidden" th:value="${event.id}" /> <input
 				th:field="${event.user.id}" type="hidden" th:value="${event.user.id}" />
+				<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 			<div class="form-group">
 				<label for="name">Name</label> <input name="name"
 					class="form-control" type="text" th:value="${event.name}" />
