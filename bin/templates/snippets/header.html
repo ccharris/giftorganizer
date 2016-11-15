@@ -19,13 +19,13 @@
                         <a href="#page-top"></a>
                     </li>
                     <li>
-                        <a href="#" th:href="@{/home}">Home</a>
+                        <a href="#" th:if="${account}" th:href="@{/home}">Home</a>
                     </li>
                     <li>
-                        <a href="#" th:href="@{/events}">Occasions</a>
+                        <a href="#" th:if="${account}" th:href="@{/events}">Occasions</a>
                     </li>
                     <li>
-                       <a href="#" th:href="@{/recipients}">Recipients</a>
+                       <a href="#" th:if="${account}" th:href="@{/recipients}">Recipients</a>
                     </li>
                     <li sec:authorize="isAuthenticated()"><a href="#" onclick="$('#logoutForm').submit();">Logout</a></li>
                     

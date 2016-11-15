@@ -49,7 +49,7 @@ public class Recipient {
 	
 	@ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private Account user;
 	
 
 	
@@ -122,11 +122,11 @@ public class Recipient {
 		this.gifts = gifts;
 	}
 
-	public User getUser() {
+	public Account getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Account user) {
 		this.user = user;
 	}
 

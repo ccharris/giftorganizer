@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,13 +21,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.harris.carolyn.beans.Event;
 import com.harris.carolyn.beans.Gift;
-import com.harris.carolyn.beans.User;
+import com.harris.carolyn.beans.Account;
 import com.harris.carolyn.beans.Recipient;
 import com.harris.carolyn.repository.EventRecipientRepository;
 import com.harris.carolyn.repository.EventRepository;
 import com.harris.carolyn.repository.GiftRepository;
-import com.harris.carolyn.repository.UserRepository;
+import com.harris.carolyn.repository.AccountRepository;
 import com.harris.carolyn.repository.RecipientRepository;
+import com.stormpath.sdk.servlet.account.AccountResolver;
 
 @Controller
 public class MainController {
@@ -44,10 +46,25 @@ public class MainController {
 	private RecipientRepository recipientRepo;
 
 	@Autowired
-	private UserRepository userRepo;
+	private AccountRepository userRepo;
 
+	boolean setOnce = false;
+	
 	@GetMapping("")
-	public String index(Model model) {
+	public String index(Model model, HttpServletRequest req) {
+
+		
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null && !setOnce){
+			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
+				
+			} else {
+			v.setAccount(req, v);
+			userRepo.save(v);
+			setOnce = true;
+			System.out.println(v.getId());
+			}
+		}
 		return "index";
 	}
 	
@@ -67,15 +84,11 @@ public class MainController {
 	}
 
 	@GetMapping("/recipients")
-	public String users(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+	public String users(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
 		if (searchTerm == null || "".equals(searchTerm)) {
 			model.addAttribute("recipients", recipientRepo.findByUserId(v.getId()));
@@ -97,7 +110,12 @@ public class MainController {
 	}
 
 	@GetMapping("/recipient/{id}/gifts")
-	public String gifts(Model model, @PathVariable(name = "id") long id) {
+	public String gifts(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("id", id);
 		Recipient u = recipientRepo.findOne(id);
 		model.addAttribute("recipient", u);
@@ -107,7 +125,12 @@ public class MainController {
 	}
 	
 	@GetMapping("/event/{id}/recipients")
-	public String eventRecipients(Model model, @PathVariable(name = "id") long id) {
+	public String eventRecipients(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("id", id);
 		Event e = eventRepo.findOne(id);
 		model.addAttribute("event", e);
@@ -116,15 +139,11 @@ public class MainController {
 	}
 
 	@GetMapping("/events")
-	public String events(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+	public String events(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
 		if (searchTerm == null || "".equals(searchTerm)) {
 			model.addAttribute("events", eventRepo.findByUserId(v.getId()));
@@ -146,12 +165,12 @@ public class MainController {
 
 	@GetMapping("/signup")
 	public String signup(Model model) {
-		model.addAttribute(new User());
+		model.addAttribute(new Account());
 		return "signup";
 	}
 
 	@PostMapping("signup")
-	public String signupSave(@ModelAttribute @Valid User user, BindingResult result, Model model) {
+	public String signupSave(@ModelAttribute @Valid Account user, BindingResult result, Model model) {
 
 		if (result.hasErrors()) {
 			model.addAttribute("user", user);
@@ -164,7 +183,12 @@ public class MainController {
 	}
 
 	@GetMapping("/recipient/{id}")
-	public String recipient(Model model, @PathVariable(name = "id") long id) {
+	public String recipient(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("id", id);
 		Recipient u = recipientRepo.findOne(id);
 		model.addAttribute("recipient", u);
@@ -172,7 +196,12 @@ public class MainController {
 	}
 	
 	@GetMapping("/event/{id}")
-	public String event(Model model, @PathVariable(name = "id") long id) {
+	public String event(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("id", id);
 		Event e = eventRepo.findOne(id);
 		model.addAttribute("event", e);
@@ -180,7 +209,12 @@ public class MainController {
 	}
 
 	@GetMapping("/recipient/{id}/gift/create")
-	public String giftCreate(Model model, @PathVariable(name = "id") long id) {
+	public String giftCreate(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		Gift g = new Gift();
 		Recipient r = recipientRepo.findOne(id);
@@ -193,7 +227,12 @@ public class MainController {
 
 	@PostMapping("/recipient/{id}/gift/create")
 	public String giftCreateSave(@ModelAttribute @Valid Gift gift, BindingResult result, Model model,
-			@PathVariable(name = "id") long id) {
+			@PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		Recipient r = recipientRepo.findOne(id);
 		model.addAttribute("recipientId", r.getId());
@@ -203,14 +242,14 @@ public class MainController {
 			return "gift_create";
 		} else {
 			gift.setRecipient(r);
-			if (gift.getLinkOne() == null) {
+			if (gift.getLinkOne() == null || gift.getLinkOne().equals("")) {
 
 			} else if (!(gift.getLinkOne().contains("http"))) {
 				String link = gift.getLinkOne();
 				String linkOne = ("http://" + link);
 				gift.setLinkOne(linkOne);
 			}
-			if (gift.getLinkTwo() == null) {
+			if (gift.getLinkTwo() == null || gift.getLinkTwo().equals("")) {
 
 			} else if (!(gift.getLinkTwo().contains("http"))) {
 				String link = gift.getLinkTwo();
@@ -226,17 +265,12 @@ public class MainController {
 	}
 
 	@GetMapping("/recipient/create")
-	public String recipientCreate(Model model) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+	public String recipientCreate(Model model, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
-		boolean isUser = false;
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
 		model.addAttribute(new Recipient());
@@ -245,15 +279,11 @@ public class MainController {
 	}
 
 	@PostMapping("/recipient/create")
-	public String recipientCreateSave(@ModelAttribute @Valid Recipient recipient, BindingResult result, Model model) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+	public String recipientCreateSave(@ModelAttribute @Valid Recipient recipient, BindingResult result, Model model, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
@@ -270,19 +300,15 @@ public class MainController {
 	}
 	
 	@GetMapping("/event/create")
-	public String eventCreate(Model model) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+	public String eventCreate(Model model, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
-		model.addAttribute("recipients", recipientRepo.findAll());
+		model.addAttribute("recipients", recipientRepo.findByUserId(v.getId()));
 		Event e = new Event();
 		e.setUser(v);
 		model.addAttribute("event", e);
@@ -291,7 +317,12 @@ public class MainController {
 	}
 
 	@PostMapping("/event/create")
-	public String eventCreateSave(@ModelAttribute @Valid Event event, BindingResult result, Model model) {
+	public String eventCreateSave(@ModelAttribute @Valid Event event, BindingResult result, Model model, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		
 
 		if (result.hasErrors()) {
@@ -305,7 +336,12 @@ public class MainController {
 	}
 
 	@GetMapping("/recipient/{id}/delete")
-	public String recipientDelete(Model model, @PathVariable(name = "id") long id) {
+	public String recipientDelete(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		model.addAttribute("gifts", giftRepo.findByRecipientId(id));
 		return "recipient_delete";
@@ -313,22 +349,23 @@ public class MainController {
 
 	@PostMapping("/recipient/{id}/delete")
 	public String recipientDeleteSave(@ModelAttribute @Valid Recipient recipient, BindingResult result, Model model,
-			@PathVariable(name = "id") long id) {
+			@PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		recipientRepo.delete(recipient);
 		return "redirect:/recipients";
 
 	}
 
 	@GetMapping("/recipient/{id}/edit")
-	public String recipientEdit(Model model, @PathVariable(name = "id") long id) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+	public String recipientEdit(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
@@ -340,16 +377,12 @@ public class MainController {
 
 	@PostMapping("/recipient/{id}/edit")
 	public String recipientEditSave(@PathVariable(name = "id") long id, @ModelAttribute @Valid Recipient recipient,
-			BindingResult result, Model model) {
+			BindingResult result, Model model, HttpServletRequest req) {
 
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
@@ -367,30 +400,29 @@ public class MainController {
 	}
 	
 	@GetMapping("/event/{id}/edit")
-	public String eventEdit(Model model, @PathVariable(name = "id") long id) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		String name = auth.getName();
-		List<User> logins = userRepo.findOneByEmail(name);
-		User v = new User();
-		for (User login : logins) {
-			if (login.getEmail().equals(name)){
-				v = login;
-			}
+	public String eventEdit(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
 		}
 		long userId = v.getId();
 		model.addAttribute("userId", userId);
 		model.addAttribute("id", id);
 		Event e = eventRepo.findOne(id);
 		model.addAttribute("event", e);
-		model.addAttribute("recipients", recipientRepo.findAll());
+		model.addAttribute("recipients", recipientRepo.findByUserId(v.getId()));
 		return "event_edit";
 	}
 
 	@PostMapping("/event/{id}/edit")
 	public String eveentEditSave(@PathVariable(name = "id") long id, @ModelAttribute @Valid Event event,
-			BindingResult result, Model model) {
-
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+			BindingResult result, Model model, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 
 		if (result.hasErrors()) {
 			model.addAttribute("event", event);
@@ -404,7 +436,12 @@ public class MainController {
 
 	@GetMapping("/recipient/{id}/gift/{giftid}/delete")
 	public String giftDelete(Model model, @PathVariable(name = "id") long id,
-			@PathVariable(name = "giftid") long giftId) {
+			@PathVariable(name = "giftid") long giftId, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		model.addAttribute("gift", giftRepo.findOne(giftId));
 		return "gift_delete";
@@ -412,7 +449,12 @@ public class MainController {
 
 	@PostMapping("/recipient/{id}/gift/{giftid}/delete")
 	public String giftDeleteSave(@ModelAttribute @Valid Gift gift, BindingResult result, Model model,
-			@PathVariable(name = "id") long id, @PathVariable(name = "giftid") long giftId) {
+			@PathVariable(name = "id") long id, @PathVariable(name = "giftid") long giftId, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		giftRepo.delete(giftRepo.findOne(giftId));
 		Recipient r = recipientRepo.findOne(id);
 
@@ -421,14 +463,24 @@ public class MainController {
 	}
 	
 	@GetMapping("/event/{id}/delete")
-	public String eventDelete(Model model, @PathVariable(name = "id") long id) {
+	public String eventDelete(Model model, @PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("event", eventRepo.findOne(id));
 		return "event_delete";
 	}
 
 	@PostMapping("/event/{id}/delete")
 	public String eventDeleteSave(@ModelAttribute @Valid Event event, BindingResult result, Model model,
-			@PathVariable(name = "id") long id) {
+			@PathVariable(name = "id") long id, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		eventRepo.delete(eventRepo.findOne(id));
 
 		return "redirect:/events";
@@ -437,7 +489,12 @@ public class MainController {
 
 	@GetMapping("/recipient/{id}/gift/{giftid}/edit")
 	public String giftEdit(Model model, @PathVariable(name = "id") long id,
-			@PathVariable(name = "giftid") long giftId) {
+			@PathVariable(name = "giftid") long giftId, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		model.addAttribute("recipientId", id);
 		model.addAttribute("id", giftId);
@@ -448,7 +505,12 @@ public class MainController {
 
 	@PostMapping("/recipient/{id}/gift/{giftid}/edit")
 	public String recipientEditSave(@PathVariable(name = "id") long id, @PathVariable(name = "giftid") long giftId,
-			@ModelAttribute @Valid Gift gift, BindingResult result, Model model) {
+			@ModelAttribute @Valid Gift gift, BindingResult result, Model model, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		model.addAttribute("recipientId", id);
 		model.addAttribute("id", giftId);
@@ -460,14 +522,14 @@ public class MainController {
 			return "gift_edit";
 		} else {
 			gift.setRecipient(recipientRepo.findOne(id));
-			if (gift.getLinkOne() == null) {
+			if (gift.getLinkOne() == null || gift.getLinkOne().equals("")) {
 
 			} else if (!(gift.getLinkOne().contains("http")) && !(gift.getLinkOne().equals(""))) {
 				String link = gift.getLinkOne();
 				String linkOne = ("http://" + link);
 				gift.setLinkOne(linkOne);
 			}
-			if (gift.getLinkTwo() == null) {
+			if (gift.getLinkTwo() == null || gift.getLinkTwo().equals("")) {
 
 			} else if (!(gift.getLinkTwo().contains("http")) && !(gift.getLinkTwo().equals(""))) {
 				String link = gift.getLinkTwo();
@@ -484,7 +546,12 @@ public class MainController {
 
 	@GetMapping("/recipient/{id}/gift/{giftid}/bought")
 	public String giftBought(Model model, @PathVariable(name = "id") long id,
-			@PathVariable(name = "giftid") long giftId) {
+			@PathVariable(name = "giftid") long giftId, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
+			v = userRepo.findOneByEmail(email);
+		}
 		model.addAttribute("recipient", recipientRepo.findOne(id));
 		model.addAttribute("recipientId", id);
 		model.addAttribute("id", giftId);

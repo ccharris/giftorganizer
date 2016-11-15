@@ -1,11 +1,10 @@
 CREATE SCHEMA IF NOT EXISTS giftOrganizer;
 use giftOrganizer;
 
-CREATE TABLE IF NOT EXISTS giftOrganizer.users (
+CREATE TABLE IF NOT EXISTS giftOrganizer.accounts (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   first_name VARCHAR(45) NOT NULL,
   last_name VARCHAR(45) NOT NULL,
-  password VARCHAR(45) NOT NULL,
   email VARCHAR(128) NOT NULL,
   active tinyint(1) NOT NULL DEFAULT 1,
   role VARCHAR(45) NOT NULL,
