@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layouts/basic">
+<head>
+<title>Gift Organizer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body layout:fragment="content">
+	<div class="col-lg-12 text-center" style="padding: 20px">
+		<h1 th:text="${event.name} + '\'s Recipients'"></h1>
+	</div>
+	<table class="table table-hover">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Birthday</th>
+				<th>Note</th>
+				<th>Gifts</th>
+				<th>Group</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+				<th>&nbsp;</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="r : ${event.recipients}">
+				<td> <a href="/"
+					th:href="@{|/recipient/${r.id}}"><span th:text="${r.firstName}"></span> <span th:if="*{! #strings.isEmpty(r.lastName)}"
+					th:text="${r.lastName}"></span> </a> </td>
+				<td th:if="*{! #strings.isEmpty(r.birthday)}"
+					th:text="${r.birthday}"></td>
+				<td th:unless="*{! #strings.isEmpty(r.birthday)}"></td>
+				<td th:unless="*{! #strings.isEmpty(r.notes)}"></td>
+				<td th:if="*{! #strings.isEmpty(r.notes)}"
+					th:text="${r.notes}"></td>
+				<td><div th:each="g : ${r.gifts}">
+						<div th:if="${g.bought} == true">
+							<p style="text-decoration: line-through" th:utext="${g.name}"></p>
+						</div>
+						<p th:if="${g.bought} == false" th:utext="${g.name}"></p>
+					</div></td>
+				<td><a href="/"
+					th:href="@{|/recipients?srch-term=${r.groupTag}}"><span th:text="${r.groupTag}" ></span></a></td>
+				<td><a class="btn btn-default" href="/"
+					th:href="@{|/recipient/${r.id}/gifts|}" role="button">
+						<i class="fa fa-gift" aria-hidden="true"></i>
+				</a></td>
+				<td><a class="btn btn-primary" href="/"
+					th:href="@{|/recipient/${r.id}/edit|}" role="button"><i
+						class="fa fa-pencil-square-o" aria-hidden="true"></i></a></td>
+				<td><a class="btn btn-success" href="/"
+					th:href="@{|/recipient/${r.id}/delete|}" role="button"> <i
+						class="fa fa-trash" aria-hidden="true"></i></a></td>
+			</tr>
+		</tbody>
+	</table>
+	<div class="row" style="padding: 50px 0px 0px 0px">
+			<a class="col-md-4" href="/events"><button class="btn btn-primary">Back</button></a>
+		</div>
+</body>
+</html>

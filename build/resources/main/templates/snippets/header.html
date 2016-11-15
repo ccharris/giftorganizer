@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.springframework.org/schema/security">
+<head></head>
+<body>
+<nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top" th:fragment="header" style="background: #36c7fe">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#" th:href="@{/}">Gift Organizer</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li>
+                        <a href="#" th:if="${account}" th:href="@{/home}">Home</a>
+                    </li>
+                    <li>
+                        <a href="#" th:if="${account}" th:href="@{/events}">Occasions</a>
+                    </li>
+                    <li>
+                       <a href="#" th:if="${account}" th:href="@{/recipients}">Recipients</a>
+                    </li>
+                    <li sec:authorize="isAuthenticated()"><a href="#" onclick="$('#logoutForm').submit();">Logout</a></li>
+                    
+                    <!-- <li>
+                        <a class="page-scroll" href="#team">Team</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#contact">Contact</a>
+                    </li> -->
+                </ul>
+                <form th:action="@{/logout}" method="post" style="display: none;" id="logoutForm" sec:authorize="isAuthenticated()">
+		            <input type="submit" value="Log Out"/>
+		        </form>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+	<!-- <nav id="mainNav" class="navbar navbar-default navbar-custom navbar-fixed-top affix-top" th:fragment="header" style="background:black">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#" th:href="@{/}">Gift Organizer</a>
+				
+			</div>
+			<div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" >
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#" th:href="@{/}">Gift Organizer</a>
+            </div>
+			<div class="navbar-collapse collapse">
+				<ul class="nav navbar-nav navbar-right" >
+				style="padding:0px 5px 0px 5px"
+					<li><a href="#" th:href="@{/}">Home</a></li>
+				
+				
+					<li><a href="#" th:href="@{/events}">Occasions</a></li>
+
+		
+					<li><a href="#" th:href="@{/recipients}">Recipients</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right" sec:authorize="isAuthenticated()">
+					<li sec:authorize="isAuthenticated()"><a href="#" onclick="$('#logoutForm').submit();">Logout</a></li>
+				</ul>
+				<form th:action="@{/logout}" method="post" style="display: none;" id="logoutForm" sec:authorize="isAuthenticated()">
+		            <input type="submit" value="Log Out"/>
+		        </form>
+			</div>
+		</div>
+	</nav> -->
+</body>
+</html>

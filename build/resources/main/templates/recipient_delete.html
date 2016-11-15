@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layouts/basic">
+<head>
+<title>Gift Organizer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body layout:fragment="content">
+	<h1>Delete Recipient</h1>
+	<div class="row col-md-6">
+		<form method="POST" th:object="${recipient}">
+			<div th:if="${recipient}">
+				<div th:object="${recipient}">
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">First Name</h4>
+						<p class="list-group-item-text" th:text="*{firstName}"></p>
+					</div>
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">Last Name</h4>
+						<p class="list-group-item-text" th:text="*{lastName}"></p>
+					</div>
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">Email Address</h4>
+						<p class="list-group-item-text" th:text="*{email}"></p>
+					</div>
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">Birthday</h4>
+						<p class="list-group-item-text" th:text="*{birthday}"></p>
+					</div>
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">Notes</h4>
+						<p class="list-group-item-text" th:text="*{notes}"></p>
+					</div>
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">Group</h4>
+						<p class="list-group-item-text" th:text="*{groupTag}"></p>
+					</div>
+					<div class="list-group-item">
+						<h4 class="list-group-item-heading">Gifts</h4>
+						<p th:each="g : ${gifts}" class="list-group-item-text" th:text="${g.name}"></p>
+					</div>
+				</div>
+			</div>
+			<div th:unless="${recipient}">
+				<h3>No user found.</h3>
+			</div>
+			<button type="submit" class="btn btn-success">Delete</button>
+		</form>
+		<div class="row" style="padding: 50px 0px 0px 0px">
+			<a class="col-md-4" href="/recipients"><button class="btn btn-primary">Back</button></a>
+		</div>
+	</div>
+
+	
+
+</body>
+</html>
