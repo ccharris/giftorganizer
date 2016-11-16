@@ -61,7 +61,10 @@ public class MainController {
 			} else {
 			v.setAccount(req, v);
 			userRepo.save(v);
-			setOnce = true;
+			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
+				setOnce = true;
+			}
+			
 			System.out.println(v.getId());
 			}
 		}
