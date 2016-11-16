@@ -52,19 +52,13 @@ public class MainController {
 	
 	@GetMapping("")
 	public String index(Model model, HttpServletRequest req) {
-
-		
 		Account v = new Account();
-		if(AccountResolver.INSTANCE.getAccount(req) != null && !setOnce){
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
 			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
 				
 			} else {
 			v.setAccount(req, v);
 			userRepo.save(v);
-			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
-				setOnce = true;
-			}
-			
 			System.out.println(v.getId());
 			}
 		}
@@ -73,19 +67,13 @@ public class MainController {
 	
 	@GetMapping("/#")
 	public String homeThing(Model model, HttpServletRequest req) {
-
-		
 		Account v = new Account();
-		if(AccountResolver.INSTANCE.getAccount(req) != null && !setOnce){
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
 			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
 				
 			} else {
 			v.setAccount(req, v);
 			userRepo.save(v);
-			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
-				setOnce = true;
-			}
-			
 			System.out.println(v.getId());
 			}
 		}
@@ -93,7 +81,17 @@ public class MainController {
 	}
 	
 	@GetMapping("/home")
-	public String home(Model model) {
+	public String home(Model model, HttpServletRequest req) {
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
+				
+			} else {
+			v.setAccount(req, v);
+			userRepo.save(v);
+			System.out.println(v.getId());
+			}
+		}
 		return "home";
 	}
 
@@ -110,6 +108,15 @@ public class MainController {
 	@GetMapping("/recipients")
 	public String users(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm, HttpServletRequest req) {
 		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
+				
+			} else {
+			v.setAccount(req, v);
+			userRepo.save(v);
+			System.out.println(v.getId());
+			}
+		}
 		if(AccountResolver.INSTANCE.getAccount(req) != null){
 			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
 			v = userRepo.findOneByEmail(email);
@@ -165,6 +172,15 @@ public class MainController {
 	@GetMapping("/events")
 	public String events(Model model, @RequestParam(name = "srch-term", required = false) String searchTerm, HttpServletRequest req) {
 		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null){
+			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
+				
+			} else {
+			v.setAccount(req, v);
+			userRepo.save(v);
+			System.out.println(v.getId());
+			}
+		}
 		if(AccountResolver.INSTANCE.getAccount(req) != null){
 			String email = (AccountResolver.INSTANCE.getAccount(req).getEmail());
 			v = userRepo.findOneByEmail(email);
