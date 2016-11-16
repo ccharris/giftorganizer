@@ -71,6 +71,27 @@ public class MainController {
 		return "index";
 	}
 	
+	@GetMapping("/#")
+	public String homeThing(Model model, HttpServletRequest req) {
+
+		
+		Account v = new Account();
+		if(AccountResolver.INSTANCE.getAccount(req) != null && !setOnce){
+			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
+				
+			} else {
+			v.setAccount(req, v);
+			userRepo.save(v);
+			if(userRepo.findOneByEmail(AccountResolver.INSTANCE.getAccount(req).getEmail()) != null){
+				setOnce = true;
+			}
+			
+			System.out.println(v.getId());
+			}
+		}
+		return "index";
+	}
+	
 	@GetMapping("/home")
 	public String home(Model model) {
 		return "home";
